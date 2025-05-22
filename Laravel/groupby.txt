@@ -1,0 +1,23 @@
+public function stat()
+{
+    // Lekérdezzük az 'asteroids' (aszteroidák) táblát
+    $stat = DB::table('asteroids')
+        // Összekapcsoljuk a 'mining_corporations' (bányász cégek) táblával
+        // A kapcsolat az 'asteroids.corporation_id' és a 'mining_corporations._id' mezők alapján történik
+        ->join('mining_corporations', 'asteroids.corporation_id', '=', 'mining_corporations._id')
+        
+        // Csoportosítjuk az eredményt a bányász cég neve szerint
+        ->groupBy('mining_corporations.name')
+        
+        // Kiválasztjuk a bányász cég nevét és megszámoljuk, hány aszteroida tartozik hozzá
+        ->select(
+            'mining_corporations.name', // A cég neve
+            DB::raw('COUNT(*) AS total_asteroids') // Aszteroidák száma az adott cégnél
+        )
+        
+        // Lefuttatjuk a lekérdezést és lekérjük az eredményt
+        ->get();
+
+    // JSON formátumban visszaküldjük az eredményt (pl. API válaszként)
+    return response()->json($stat);
+}
