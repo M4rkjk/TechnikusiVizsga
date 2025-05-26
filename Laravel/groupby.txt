@@ -21,3 +21,18 @@ public function stat()
     // JSON formátumban visszaküldjük az eredményt (pl. API válaszként)
     return response()->json($stat);
 }
+
+
+ public function stat()
+    {
+        $stat = DB::table('FO_TÁBLA_NEVE') // pl. space_agencies
+        ->join('KAPCSOLT_TÁBLA_NEVE', 'FO_TÁBLA.PRIMARY_KULCS', '=', 'KAPCSOLT_TÁBLA.FOREIGN_KULCS')
+        ->groupBy('FO_TÁBLA.NÉV_VAGY_ID')
+        ->select(
+            'FO_TÁBLA.NÉV_VAGY_ID',
+            DB::raw('COUNT(*) as összeg')
+        )
+        ->get();
+
+        return response()->json($stat);
+    }
